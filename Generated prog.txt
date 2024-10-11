@@ -1,0 +1,263 @@
+Here’s a step-by-step implementation for the Inventory Management System using the Java topics outlined in your syllabus. The code includes key features like product management, inheritance, exception handling, multithreading, and a simple GUI using JavaFX.
+
+1. Product Class (Basic Product Structure)
+package inventory;
+
+public class Product {
+    private int id;
+    private String name;
+    private String type;  // "Good" or "Cargo"
+    private double price;
+    private int quantity;
+    private String shipmentMode;  // "Land" or "Sea"
+    
+    public Product(int id, String name, String type, double price, int quantity, String shipmentMode) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.price = price;
+        this.quantity = quantity;
+        this.shipmentMode = shipmentMode;
+    }
+    
+    // Getter and Setter methods
+    public int getId() { return id; }
+    public String getName() { return name; }
+    public String getType() { return type; }
+    public double getPrice() { return price; }
+    public int getQuantity() { return quantity; }
+    public String getShipmentMode() { return shipmentMode; }
+    
+    public void setQuantity(int quantity) { this.quantity = quantity; }
+
+    // Stock update methods
+    public void updateStock(int count) {
+        this.quantity += count;
+    }
+
+    public boolean isOutOfStock() {
+        return this.quantity <= 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Product ID: " + id + ", Name: " + name + ", Type: " + type + ", Price: " + price + 
+               ", Quantity: " + quantity + ", Shipment Mode: " + shipmentMode;
+    }
+}
+2. User Class (Abstract) and Manager/Customer Inheritance
+
+package users;
+
+import inventory.Product;
+import java.util.ArrayList;
+
+public abstract class User {
+    protected String name;
+    
+    public User(String name) {
+        this.name = name;
+    }
+
+    // Abstract methods to be overridden
+    public abstract void viewProducts(ArrayList<Product> products);
+    public abstract void placeOrder(Product product, int quantity);
+}
+java
+Copy code
+package users;
+
+import inventory.Product;
+import java.util.ArrayList;
+
+public class Manager extends User {
+
+    public Manager(String name) {
+        super(name);
+    }
+
+    // View all products
+    @Override
+    public void viewProducts(ArrayList<Product> products) {
+        System.out.println("Product List:");
+        for (Product product : products) {
+            System.out.println(product);
+        }
+    }
+
+    // Add products to the inventory
+    public void addProduct(ArrayList<Product> products, Product product) {
+        products.add(product);
+        System.out.println("Product added: " + product.getName());
+    }
+
+    public void generateReport(ArrayList<Product> products) {
+        // Implement report generation logic
+    }
+
+    @Override
+    public void placeOrder(Product product, int quantity) {
+        System.out.println("Managers cannot place orders.");
+    }
+}
+
+package users;
+
+import inventory.Product;
+import java.util.ArrayList;
+
+public class Customer extends User {
+    
+    public Customer(String name) {
+        super(name);
+    }
+
+    @Override
+    public void viewProducts(ArrayList<Product> products) {
+        System.out.println("Available Products:");
+        for (Product product : products) {
+            System.out.println(product);
+        }
+    }
+
+    @Override
+    public void placeOrder(Product product, int quantity) {
+        if (product.getQuantity() >= quantity) {
+            product.setQuantity(product.getQuantity() - quantity);
+            System.out.println("Order placed successfully for " + quantity + " units of " + product.getName());
+        } else {
+            System.out.println("Insufficient stock for " + product.getName());
+        }
+    }
+}
+3. Exception Handling (Custom Exception for Out-of-Stock)
+
+package exceptions;
+
+public class OutOfStockException extends Exception {
+    public OutOfStockException(String message) {
+        super(message);
+    }
+}
+4. Order Class
+
+package inventory;
+
+public class Order {
+    private int orderId;
+    private Product product;
+    private int quantity;
+    private String shipmentMode;
+    private double totalPrice;
+
+    public Order(int orderId, Product product, int quantity, String shipmentMode) {
+        this.orderId = orderId;
+        this.product = product;
+        this.quantity = quantity;
+        this.shipmentMode = shipmentMode;
+        this.totalPrice = product.getPrice() * quantity;
+    }
+
+    public void confirmOrder() {
+        System.out.println("Order ID: " + orderId + " for " + quantity + " units of " + product.getName() + 
+                           " placed successfully. Shipment Mode: " + shipmentMode + 
+                           ". Total Price: " + totalPrice);
+    }
+}
+5. Concurrency Handling (Multithreading)
+
+package threads;
+
+import inventory.Product;
+
+public class OrderThread extends Thread {
+    private Product product;
+    private int quantity;
+
+    public OrderThread(Product product, int quantity) {
+        this.product = product;
+        this.quantity = quantity;
+    }
+
+    @Override
+    public void run() {
+        synchronized (product) {
+            if (product.getQuantity() >= quantity) {
+                product.setQuantity(product.getQuantity() - quantity);
+                System.out.println("Order placed for " + quantity + " units of " + product.getName());
+            } else {
+                System.out.println("Not enough stock for " + product.getName());
+            }
+        }
+    }
+}
+6. Simple JavaFX GUI for User Interaction
+
+package gui;
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+public class InventoryApp extends Application {
+    
+    @Override
+    public void start(Stage primaryStage) {
+        Label label = new Label("Enter Product ID:");
+        TextField textField = new TextField();
+        Button button = new Button("View Product");
+        
+        button.setOnAction(e -> {
+            // Logic to fetch product by ID and display details
+        });
+
+        VBox vbox = new VBox(10, label, textField, button);
+        Scene scene = new Scene(vbox, 300, 200);
+        
+        primaryStage.setTitle("Inventory Management");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+Bringing Everything Together
+
+package main;
+
+import inventory.Product;
+import users.Customer;
+import users.Manager;
+
+import java.util.ArrayList;
+
+public class Main {
+    public static void main(String[] args) {
+        ArrayList<Product> products = new ArrayList<>();
+        Manager manager = new Manager("Manager1");
+        Customer customer = new Customer("Customer1");
+
+        // Manager adds products
+        Product p1 = new Product(1, "Laptop", "Good", 80000, 10, "Land");
+        Product p2 = new Product(2, "Phone", "Good", 50000, 5, "Sea");
+        manager.addProduct(products, p1);
+        manager.addProduct(products, p2);
+
+        // Customer views products
+        customer.viewProducts(products);
+
+        // Customer places an order
+        customer.placeOrder(p1, 2);
+    }
+}
+Next Steps:
+Enhance the GUI for more user interaction.
+Implement Reports for managers (statistics on product types, shipments, etc.).
+Add additional functionality for error handling and synchronization using multithreading.
+This basic setup adheres to the Java topics from your course and can be expanded further as needed.
