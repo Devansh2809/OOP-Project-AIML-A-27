@@ -1,4 +1,4 @@
-class OrderThread extends Thread {
+public class OrderThread extends Thread {
     private Inventory inventory;
     private Customer customer;
     private int productId;
