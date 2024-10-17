@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.invfinal.NewRegistrationController"
+            prefHeight="400.0" prefWidth="600.0">
+    <children>
+
+        <!-- Title -->
+        <Label layoutX="250.0" layoutY="40.0" text="User Registration" />
+
+        <!-- Name Field -->
+        <Label layoutX="170.0" layoutY="100.0" text="Name:" />
+        <TextField fx:id="nameField" layoutX="230.0" layoutY="100.0" promptText="Enter your name" />
+
+        <!-- Password Field -->
+        <Label layoutX="170.0" layoutY="140.0" text="Password:" />
+        <PasswordField fx:id="passwordField" layoutX="230.0" layoutY="140.0" promptText="Enter password" />
+
+        <!-- Re-enter Password Field -->
+        <Label layoutX="130.0" layoutY="180.0" text="Re-enter Password:" />
+        <PasswordField fx:id="reenterPasswordField" layoutX="230.0" layoutY="180.0" promptText="Re-enter password" />
+
+        <!-- Role Selection -->
+        <Label layoutX="170.0" layoutY="220.0" text="Role:" />
+        <ComboBox fx:id="roleComboBox" layoutX="230.0" layoutY="220.0" promptText="Select role">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="Customer" />
+                    <String fx:value="Manager" />
+                </FXCollections>
+            </items>
+        </ComboBox>
+
+        <!-- Register Button -->
+        <Button layoutX="250.0" layoutY="270.0" text="Register" fx:id="registerButton" />
+
+    </children>
+</AnchorPane>
